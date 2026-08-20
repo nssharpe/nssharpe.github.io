@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nssharpe — Pages Index</title>
+<meta name="description" content="An index of every GitHub Pages site published by nssharpe.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>&#128218;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f6f1e7;
+    --paper-deep: #ede5d4;
+    --ink: #221c14;
+    --ink-soft: #5c5346;
+    --ink-faint: #6e6557;
+    --rule: #d8cdb8;
+    --accent: #b3410f;
+    --accent-ink: #ffffff;
+    --hover-wash: #efe7d6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #171512;
+      --paper-deep: #1f1c17;
+      --ink: #ece5d8;
+      --ink-soft: #b0a795;
+      --ink-faint: #8d8574;
+      --rule: #353026;
+      --accent: #ff7a3c;
+      --accent-ink: #171512;
+      --hover-wash: #201d18;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Fraunces", Georgia, serif;
+    font-optical-sizing: auto;
+    line-height: 1.5;
+    min-height: 100vh;
+    /* faint paper grain */
+    background-image: radial-gradient(var(--rule) 0.5px, transparent 0.5px);
+    background-size: 26px 26px;
+  }
+
+  .sheet {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: clamp(2rem, 6vw, 5rem) clamp(1.25rem, 5vw, 3rem) 6rem;
+  }
+
+  /* ---------- masthead ---------- */
+  header { margin-bottom: clamp(2.5rem, 7vw, 5rem); }
+
+  .kicker {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .kicker::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid var(--rule);
+    transform: translateY(-0.25em);
+  }
+
+  h1 {
+    font-size: clamp(2.6rem, 8vw, 5rem);
+    font-weight: 560;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+  }
+  h1 em {
+    font-style: italic;
+    font-weight: 380;
+    color: var(--ink-soft);
+  }
+
+  .standfirst {
+    margin-top: 1.4rem;
+    max-width: 46ch;
+    font-size: 1.02rem;
+    font-weight: 340;
+    color: var(--ink-soft);
+  }
+  .standfirst a { color: inherit; text-underline-offset: 3px; }
+  .standfirst a:hover { color: var(--accent); }
+
+  #census {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-top: 2.2rem;
+  }
+
+  /* ---------- index entries ---------- */
+  ol.index { list-style: none; border-top: 1px solid var(--rule); }
+
+  .entry {
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    transform: translateY(10px);
+    animation: rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: calc(var(--i) * 70ms);
+  }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .entry { animation: none; opacity: 1; transform: none; }
+  }
+
+  .entry-link {
+    display: grid;
+    grid-template-columns: 3.2rem 1fr auto;
+    grid-template-areas:
+      "num title  date"
+      "num desc   date";
+    column-gap: 1.4rem;
+    align-items: baseline;
+    padding: 1.15rem 0.6rem 1.2rem 0.2rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background-color 0.18s ease, padding-left 0.18s ease;
+  }
+  .entry-link:hover, .entry-link:focus-visible {
+    background: var(--hover-wash);
+    padding-left: 0.7rem;
+  }
+  .entry-link:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+  .num {
+    grid-area: num;
+    align-self: start;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    padding-top: 0.45em;
+  }
+
+  .title {
+    grid-area: title;
+    font-size: clamp(1.25rem, 3.4vw, 1.7rem);
+    font-weight: 520;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+  .entry-link:hover .title { color: var(--accent); }
+  .title .arrow {
+    display: inline-block;
+    font-weight: 380;
+    color: var(--accent);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .entry-link:hover .arrow, .entry-link:focus-visible .arrow {
+    opacity: 1;
+    transform: none;
+  }
+
+  .desc {
+    grid-area: desc;
+    margin-top: 0.3rem;
+    font-size: 0.95rem;
+    font-weight: 340;
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+  .desc.none { font-style: italic; color: var(--ink-faint); }
+
+  .date {
+    grid-area: date;
+    align-self: start;
+    padding-top: 0.55em;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.72rem;
+    white-space: nowrap;
+    color: var(--ink-faint);
+    letter-spacing: 0.05em;
+  }
+
+  .repo-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 0.6rem 0.9rem;
+    margin-top: -0.55rem;
+  }
+  .repo-link {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--ink-faint);
+    padding-bottom: 1px;
+  }
+  .repo-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  @media (max-width: 560px) {
+    .entry-link {
+      grid-template-columns: 2.1rem 1fr;
+      grid-template-areas:
+        "num title"
+        "num desc"
+        "num date";
+    }
+    .date { padding-top: 0.55rem; }
+  }
+
+  /* ---------- states ---------- */
+  .state {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    padding: 3rem 0;
+    text-align: center;
+    letter-spacing: 0.06em;
+  }
+  .state.error { color: var(--accent); }
+  .state .dots::after {
+    content: "";
+    animation: dots 1.2s steps(4) infinite;
+  }
+  @keyframes dots {
+    0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; }
+  }
+
+  footer {
+    margin-top: 4rem;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  footer a { color: inherit; }
+  footer a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header>
+    <p class="kicker">nssharpe.github.io</p>
+    <h1>An index of <em>everything</em><br>published here.</h1>
+    <p class="standfirst">
+      Every GitHub Pages site under <a href="https://github.com/nssharpe">github.com/nssharpe</a>,
+      fetched live from the GitHub API. Enable Pages on a new repo and it shows up
+      here on its own — nothing to maintain.
+    </p>
+    <p id="census" aria-live="polite"></p>
+  </header>
+
+  <main>
+    <div id="state" class="state"><span class="dots">consulting the card catalog</span></div>
+    <ol class="index" id="index"></ol>
+  </main>
+
+  <footer>
+    <span>updated live · api.github.com</span>
+    <a href="https://github.com/nssharpe/nssharpe.github.io">source</a>
+  </footer>
+</div>
+
+<script>
+(async function () {
+  const USER = "nssharpe";
+  const SELF = USER + ".github.io";
+  const EXCLUDE = new Set([SELF]);           // repos to hide from the index
+  const CACHE_KEY = "pages-index-cache-v1";
+
+  // storage can be disabled (private modes, sandboxed contexts) — never let it break the page
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch { /* ignore */ } }
+  };
+
+  const state = document.getElementById("state");
+  const list = document.getElementById("index");
+  const census = document.getElementById("census");
+
+  async function fetchRepos() {
+    const repos = [];
+    for (let page = 1; page <= 3; page++) {
+      const res = await fetch(
+        `https://api.github.com/users/${USER}/repos?per_page=100&page=${page}`,
+        { headers: { Accept: "application/vnd.github+json" } }
+      );
+      if (!res.ok) throw new Error(`GitHub API ${res.status}`);
+      const batch = await res.json();
+      repos.push(...batch);
+      if (batch.length < 100) break;
+    }
+    return repos;
+  }
+
+  function relative(iso) {
+    const days = Math.floor((Date.now() - new Date(iso)) / 86400000);
+    if (days < 1) return "today";
+    if (days === 1) return "yesterday";
+    if (days < 30) return days + "d ago";
+    if (days < 365) return Math.floor(days / 30) + "mo ago";
+    const y = Math.floor(days / 365);
+    return y + (y === 1 ? " yr ago" : " yrs ago");
+  }
+
+  function render(repos, fromCache) {
+    const sites = repos
+      .filter(r => r.has_pages && !EXCLUDE.has(r.name))
+      .sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at));
+
+    if (!sites.length) {
+      state.className = "state";
+      state.textContent = "no pages sites found";
+      return;
+    }
+
+    state.hidden = true;
+    census.textContent =
+      sites.length + " sites in print" + (fromCache ? " · cached copy (api unavailable)" : "");
+
+    list.innerHTML = "";
+    sites.forEach((r, i) => {
+      const li = document.createElement("li");
+      li.className = "entry";
+      li.style.setProperty("--i", i);
+
+      const a = document.createElement("a");
+      a.className = "entry-link";
+      a.href = `https://${USER}.github.io/${r.name}/`;
+
+      const num = document.createElement("span");
+      num.className = "num";
+      num.textContent = String(i + 1).padStart(2, "0");
+
+      const title = document.createElement("span");
+      title.className = "title";
+      title.textContent = r.name + " ";
+      const arrow = document.createElement("span");
+      arrow.className = "arrow";
+      arrow.textContent = "↗";
+      title.appendChild(arrow);
+
+      const desc = document.createElement("span");
+      desc.className = "desc" + (r.description ? "" : " none");
+      desc.textContent = r.description || "no description";
+
+      const date = document.createElement("span");
+      date.className = "date";
+      date.textContent = relative(r.pushed_at);
+
+      a.append(num, title, desc, date);
+      li.appendChild(a);
+
+      const repoRow = document.createElement("div");
+      repoRow.className = "repo-row";
+      const repoLink = document.createElement("a");
+      repoLink.className = "repo-link";
+      repoLink.href = r.html_url;
+      repoLink.textContent = "view source →";
+      repoRow.appendChild(repoLink);
+      li.appendChild(repoRow);
+
+      list.appendChild(li);
+    });
+  }
+
+  try {
+    const repos = await fetchRepos();
+    store.set(CACHE_KEY, JSON.stringify(repos));
+    render(repos, false);
+  } catch (err) {
+    const cached = store.get(CACHE_KEY);
+    if (cached) {
+      render(JSON.parse(cached), true);
+    } else {
+      state.className = "state error";
+      state.textContent =
+        "couldn't reach the GitHub API (" + err.message + ") — try again in a minute";
+    }
+  }
+})();
+</script>
+</body>
+</html>
