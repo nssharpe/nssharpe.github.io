@@ -155,7 +155,7 @@ button { font: inherit; cursor: pointer; }
 .board-scroll {
   flex: 1;
   overflow: auto;
-  background-color: var(--bg-page);
+  background-color: var(--bg-board);
   background-image: radial-gradient(var(--ucg-border-soft) 0.5px, transparent 0.5px);
   background-size: 26px 26px;
   -webkit-overflow-scrolling: touch;
