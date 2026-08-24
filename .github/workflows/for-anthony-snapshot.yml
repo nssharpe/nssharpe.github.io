@@ -1,0 +1,60 @@
+# Snapshots the For-Anthony board out of Firebase into the repo every 6 hours,
+# so the board survives independently of the database (and card.html can fall
+# back to the committed copy if Firebase is ever unreachable or removed).
+name: for-anthony snapshot
+
+on:
+  schedule:
+    - cron: '41 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch board from Firebase
+        env:
+          DB: https://ucg-for-anthony-default-rtdb.firebaseio.com
+        run: |
+          set -euo pipefail
+          curl -fsS "$DB/board/notes.json" -o /tmp/notes.json
+          curl -fsS "$DB/board/imgs.json"  -o /tmp/imgs.json
+          # Validate JSON and wrap into the shapes the pages expect
+          jq -e 'type == "object" or . == null' /tmp/notes.json > /dev/null
+          jq -e 'type == "object" or . == null' /tmp/imgs.json  > /dev/null
+          jq -c '{notes: (. // {})}' /tmp/notes.json > /tmp/snapshot.json
+          jq -c '{imgs:  (. // {})}' /tmp/imgs.json  > /tmp/images.json
+
+      - name: Guard against a wiped database
+        run: |
+          set -euo pipefail
+          old=$(jq -r '.notes | length' for-anthony/data/snapshot.json 2>/dev/null || echo 0)
+          new=$(jq -r '.notes | length' /tmp/snapshot.json)
+          echo "notes: committed=$old fetched=$new"
+          # Refuse to shrink the committed snapshot by more than 10 notes at once;
+          # deliberate removals still replicate as tombstone records, not shrinkage.
+          if [ "$new" -lt $((old - 10)) ]; then
+            echo "::error::Fetched board is drastically smaller than the committed snapshot; refusing to overwrite."
+            exit 1
+          fi
+
+      - name: Commit if changed
+        run: |
+          set -euo pipefail
+          mkdir -p for-anthony/data
+          cp /tmp/snapshot.json for-anthony/data/snapshot.json
+          cp /tmp/images.json  for-anthony/data/images.json
+          if git diff --quiet -- for-anthony/data; then
+            echo "No changes."
+            exit 0
+          fi
+          git config user.name  "board-snapshot[bot]"
+          git config user.email "board-snapshot@users.noreply.github.com"
+          git add for-anthony/data
+          git commit -m "chore: snapshot for-anthony board"
+          git push
