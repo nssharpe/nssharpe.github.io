@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>For Anthony — leave a note · UCG</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>&#128330;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:wght@400;500&family=Caveat:wght@500&family=Kalam&family=Dancing+Script:wght@500&family=Lora:ital@0;1&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="board.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="kicker">From your UCG family</span>
+    <h1>For Anthony</h1>
+  </div>
+  <div class="actions">
+    <div class="zoom-group" aria-label="zoom">
+      <button id="btn-zoom-out" title="Zoom out" aria-label="Zoom out">−</button>
+      <button id="btn-zoom-in" title="Zoom in" aria-label="Zoom in">+</button>
+    </div>
+    <button class="btn primary" id="btn-add">Leave a note</button>
+  </div>
+</header>
+
+<div class="board-scroll">
+  <div class="board-stage">
+    <div class="board" id="board"></div>
+  </div>
+</div>
+
+<div class="state-banner" id="state-banner" hidden></div>
+<div class="toast" id="toast" role="status"></div>
+
+<!-- selected-note controls -->
+<div class="note-controls" id="note-controls" hidden>
+  <div class="sliders">
+    <label>Size <input type="range" id="slider-w" min="180" max="420" step="4"></label>
+    <label>Text <input type="range" id="slider-fs" min="0.75" max="1.6" step="0.05"></label>
+    <label>Tilt <input type="range" id="slider-rot" min="-15" max="15" step="1"></label>
+  </div>
+  <div class="buttons">
+    <button class="btn" id="btn-edit-note">Edit</button>
+    <button class="btn danger" id="btn-delete-note">Remove</button>
+    <button class="btn primary" id="btn-done-note">Done</button>
+  </div>
+  <div class="drag-hint">Drag your note to move it · use the sliders to resize and tilt</div>
+</div>
+
+<!-- add / edit dialog -->
+<div class="overlay" id="note-overlay" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+    <h3 id="dlg-title">Leave a note for Anthony</h3>
+
+    <label class="field">
+      <span>Your message</span>
+      <textarea id="in-text" maxlength="600" placeholder="A few words for Anthony…"></textarea>
+    </label>
+
+    <label class="field">
+      <span>Your name</span>
+      <input type="text" id="in-name" maxlength="60" placeholder="So he knows who it's from">
+    </label>
+
+    <div class="field">
+      <span>Handwriting</span>
+      <div class="chip-row" id="font-row"></div>
+    </div>
+
+    <div class="field">
+      <span>Paper</span>
+      <div class="chip-row" id="color-row"></div>
+    </div>
+
+    <div class="field">
+      <span>Photo or GIF (optional)</span>
+      <div class="img-row">
+        <button class="btn" id="btn-upload" type="button" onclick="document.getElementById('in-file').click()">Upload a photo</button>
+        <input type="file" id="in-file" accept="image/*" hidden>
+        <input type="url" id="in-url" placeholder="…or paste a GIF / image link">
+        <button class="btn" id="btn-url-add" type="button">Add</button>
+      </div>
+      <div class="img-hint">Tip: find a GIF on giphy.com or tenor.com, long-press or right-click it, and copy the image address.</div>
+      <div class="field-error" id="img-error" hidden></div>
+      <div class="img-preview" id="img-preview" hidden>
+        <img alt="preview">
+        <button class="btn" id="btn-img-remove" type="button">Remove</button>
+      </div>
+    </div>
+
+    <div class="field-error" id="form-error" hidden></div>
+
+    <div class="dialog-buttons">
+      <button class="btn" id="btn-dlg-cancel">Cancel</button>
+      <button class="btn primary" id="btn-dlg-save">Put it on the board</button>
+    </div>
+  </div>
+</div>
+
+<!-- first-visit intro -->
+<div class="overlay" id="intro-overlay" hidden>
+  <div class="dialog intro-card">
+    <div class="kicker">A card for Anthony · from UCG</div>
+    <h3>Add your note to the board</h3>
+    <p>We're collecting messages for Anthony. Tap <strong>Leave a note</strong>, write a few words, and add a photo or GIF if you'd like.</p>
+    <p>Your note appears on the board right away — drag it anywhere, tilt it, make it yours.</p>
+    <div class="dialog-buttons" style="justify-content:center">
+      <button class="btn primary" id="btn-intro-ok">Okay</button>
+    </div>
+  </div>
+</div>
+
+<script src="board.js"></script>
+<script src="sign.js"></script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>For Anthony · from your UCG family</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>&#128330;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:wght@400;500&family=Caveat:wght@500&family=Kalam&family=Dancing+Script:wght@500&family=Lora:ital@0;1&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="board.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="kicker">With sympathy · from your UCG family</span>
+    <h1>For Anthony</h1>
+  </div>
+  <div class="actions">
+    <div class="zoom-group" aria-label="zoom">
+      <button id="btn-zoom-out" title="Zoom out" aria-label="Zoom out">−</button>
+      <button id="btn-zoom-in" title="Zoom in" aria-label="Zoom in">+</button>
+    </div>
+    <button class="btn" id="btn-jpg" disabled>Save as image</button>
+    <button class="btn primary" id="btn-pdf" disabled>Save as PDF</button>
+  </div>
+</header>
+
+<div class="board-scroll">
+  <div class="board-stage">
+    <div class="board" id="board"></div>
+  </div>
+</div>
+
+<div class="state-banner" id="state-banner" hidden></div>
+<div class="toast" id="toast" role="status"></div>
+
+<footer class="gift-footer">Made with love by your friends at UCG</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous"></script>
+<script src="board.js"></script>
+<script>
+'use strict';
+(() => {
+  const boardEl = document.getElementById('board');
+  const scrollEl = document.querySelector('.board-scroll');
+  const stageEl = document.querySelector('.board-stage');
+  const banner = document.getElementById('state-banner');
+  const toastEl = document.getElementById('toast');
+  const btnJpg = document.getElementById('btn-jpg');
+  const btnPdf = document.getElementById('btn-pdf');
+
+  const bstore = FA.createStore();
+  const viewport = FA.initViewport(scrollEl, stageEl, boardEl);
+
+  let toastTimer = null;
+  function toast(msg, ms) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), ms || 3600);
+  }
+
+  document.getElementById('btn-zoom-in').addEventListener('click', () => viewport.zoom(1.25));
+  document.getElementById('btn-zoom-out').addEventListener('click', () => viewport.zoom(0.8));
+
+  async function exportBoard(kind) {
+    btnJpg.disabled = true;
+    btnPdf.disabled = true;
+    try {
+      const { canvas, failedImages } = await FA.exportCanvas(bstore.notes, bstore.imageSrc, msg => toast(msg, 8000));
+      if (kind === 'jpg') {
+        const a = document.createElement('a');
+        a.download = 'For-Anthony-from-UCG.jpg';
+        a.href = canvas.toDataURL('image/jpeg', 0.92);
+        a.click();
+      } else {
+        const { jsPDF } = window.jspdf;
+        const w = canvas.width / 2, h = canvas.height / 2;
+        const pdf = new jsPDF({ orientation: w > h ? 'landscape' : 'portrait', unit: 'pt', format: [w, h] });
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, w, h);
+        pdf.save('For-Anthony-from-UCG.pdf');
+      }
+      toast(failedImages
+        ? 'Saved — though ' + failedImages + ' image' + (failedImages > 1 ? 's' : '') + ' couldn’t be included.'
+        : 'Saved. Thank you for keeping this.', 5200);
+    } catch (e) {
+      toast('Sorry — the download didn’t work. Try again in a moment.', 5200);
+    } finally {
+      btnJpg.disabled = false;
+      btnPdf.disabled = false;
+    }
+  }
+
+  btnJpg.addEventListener('click', () => exportBoard('jpg'));
+  btnPdf.addEventListener('click', () => exportBoard('pdf'));
+
+  function render() {
+    FA.renderBoard(boardEl, bstore.notes, { imageSrc: bstore.imageSrc });
+    viewport.apply();
+  }
+
+  (async function boot() {
+    banner.textContent = 'opening the card…';
+    banner.hidden = false;
+    await bstore.init();
+    banner.hidden = true;
+    bstore.onChange(render);
+    render();
+    viewport.fit();
+    btnJpg.disabled = false;
+    btnPdf.disabled = false;
+  })();
+
+  setInterval(() => {
+    if (document.visibilityState === 'visible') bstore.poll();
+  }, FA.CONFIG.POLL_MS);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') bstore.poll();
+  });
+})();
+</script>
+</body>
+</html>
