@@ -414,11 +414,12 @@ const FA = (() => {
     const el = document.createElement('div');
     el.className = 'plaque';
     el.innerHTML =
+      '<img class="plaque-mark" src="assets/ucg-mark.svg" alt="">' +
       '<div class="kicker">With sympathy · from your UCG family</div>' +
-      '<h2><em>Anthony,</em></h2>' +
+      '<h2>Anthony,</h2>' +
       '<p>We’re so sorry for your loss, and just wanted you to know that we’re thinking of you.</p>' +
       '<div class="rule"></div>' +
-      '<div class="signoff">— UCG</div>';
+      '<img class="plaque-logotype" src="assets/ucg-logotype.svg" alt="UCG — United Club Gymnastics">';
     return el;
   }
 
