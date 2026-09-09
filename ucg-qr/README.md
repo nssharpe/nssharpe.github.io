@@ -1,0 +1,49 @@
+# UCG QR Code Generator
+
+Live at <https://nssharpe.github.io/ucg-qr/>
+
+A UCG-branded QR generator: radial gradient dots (`#DBEBEE` centre → `#1E2B38`
+exterior), `#184B56` finder patterns, the UCG mark in the centre, and an
+optional border with Greed Condensed labels in caps.
+
+Temporary home. This is meant to move onto the UCG site once it launches — the
+page is a single self-contained file with no external asset paths, so it can be
+dropped into a WordPress custom-HTML block as-is.
+
+## Do not edit `index.html` directly
+
+It is generated. The UCG mark and Greed Condensed Bold are inlined as base64,
+which is what makes the file self-contained — and is *required*, not just
+convenient: the PNG export rasterises the artwork through an `<img>` data: URL,
+which cannot reach an external font. A linked font renders correctly in the live
+preview and then silently falls back in the download.
+
+Source and build script live alongside the NAIGC generator:
+
+```
+Misc/Coding/ucg-qr-generator.src.html   <- edit this
+Misc/Coding/build_ucg_qr.py             <- then run this
+```
+
+```bash
+python build_ucg_qr.py
+```
+
+It reads the mark and the font straight out of the 2026 UCG Brand Toolkit in
+Dropbox and writes `nssharpe.github.io/ucg-qr/index.html`.
+
+## Notes
+
+- **Logo vs. capacity.** The centre logo consumes error-correction capacity, so
+  a long URL at a 60% logo can produce a code that no longer decodes. Every
+  render is verified with jsQR and the logo is stepped down (0.6 → 0.3) until the
+  code reads back; the status line under the preview says what happened. A URL
+  too long even at 30% gets a warning instead of a silently broken code.
+- **Gradient.** A mid stop (`#5E8B99` at 0.34) holds the first ring of dots
+  emerging from behind the logo at ~3.7:1 against the paper. Both endpoints are
+  as briefed; without that stop the ring lands near 2.4:1 and prints as a
+  washed-out halo. Delete the stop in the source for the literal two-stop ramp.
+- **Fonts.** Greed Condensed Bold is embedded. `for-anthony/board.css` uses
+  Saira Condensed instead, deliberately, to avoid shipping the retail face —
+  worth confirming the Greed licence covers webfont use before this goes on the
+  public UCG site.
