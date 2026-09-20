@@ -180,7 +180,15 @@
 
         #canvas {
             width: 100%;
-            background: #fff;
+            /* Checkerboard, so the transparent corners outside the badge's
+               rounded border are visible in the preview rather than blending
+               into a white card. */
+            background-color: #ffffff;
+            background-image:
+                linear-gradient(45deg, #e5edef 25%, transparent 25%, transparent 75%, #e5edef 75%),
+                linear-gradient(45deg, #e5edef 25%, transparent 25%, transparent 75%, #e5edef 75%);
+            background-size: 18px 18px;
+            background-position: 0 0, 9px 9px;
             border: 1px solid var(--ucg-border);
             border-radius: 10px;
             padding: 10px;
@@ -366,8 +374,9 @@
                 canvas.width = width;
                 canvas.height = height;
                 const ctx = canvas.getContext('2d');
-                ctx.fillStyle = UCG.paper;
-                ctx.fillRect(0, 0, width, height);
+                // No paper fill: the artwork carries its own white inside the
+                // rounded border, so the four corners outside it stay
+                // transparent and the badge drops onto any background.
                 ctx.drawImage(img, 0, 0, width, height);
                 const a = document.createElement('a');
                 a.href = canvas.toDataURL('image/png');
@@ -618,8 +627,7 @@
   <defs>
     <style type="text/css">${svgFontFace}</style>
   </defs>
-  <rect x="0" y="0" width="${totalWidth}" height="${totalHeight}" fill="${UCG.paper}"/>
-  <rect x="${OUTER_STROKE / 2}" y="${OUTER_STROKE / 2}" width="${totalWidth - OUTER_STROKE}" height="${totalHeight - OUTER_STROKE}" rx="${OUTER_RADIUS}" ry="${OUTER_RADIUS}" fill="none" stroke="${UCG.frame}" stroke-width="${OUTER_STROKE}"/>
+  <rect x="${OUTER_STROKE / 2}" y="${OUTER_STROKE / 2}" width="${totalWidth - OUTER_STROKE}" height="${totalHeight - OUTER_STROKE}" rx="${OUTER_RADIUS}" ry="${OUTER_RADIUS}" fill="${UCG.paper}" stroke="${UCG.frame}" stroke-width="${OUTER_STROKE}"/>
   <rect x="${frameX}" y="${frameY}" width="${frameSide}" height="${frameSide}" rx="${framePathRadius}" ry="${framePathRadius}" fill="none" stroke="${UCG.frame}" stroke-width="${INNER_STROKE}"/>
   <image x="${qrX}" y="${qrY}" width="${QR_SIZE}" height="${QR_SIZE}" href="${qrDataUrl}"/>
   <text x="${totalWidth / 2}" y="${topBaseline}" text-anchor="middle" font-family="${UCG.fontFamily}" font-weight="700" font-size="${fontSize}" fill="${UCG.frame}">${escapeXml(topText)}</text>

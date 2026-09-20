@@ -35,6 +35,14 @@ Dropbox and writes `nssharpe.github.io/ucg-qr/index.html`.
 
 ## Notes
 
+- **Transparent corners.** With the border on, the badge's white stops at the
+  rounded border — the four corners outside it are transparent in both the PNG
+  and the SVG, so it drops onto any background. That comes from the border rect
+  carrying the paper fill itself rather than a full-bleed white rect behind
+  everything, plus *not* pre-filling the export canvas. The preview sits on a
+  checkerboard so the transparency is visible. Border off, the bare QR stays
+  fully opaque white — a transparent QR background is unscannable on a dark
+  surface.
 - **Logo vs. capacity.** The centre logo consumes error-correction capacity, so
   a long URL at a 60% logo can produce a code that no longer decodes. Every
   render is verified with jsQR and the logo is stepped down (0.6 → 0.3) until the
