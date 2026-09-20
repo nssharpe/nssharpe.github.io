@@ -237,6 +237,12 @@
             color: #8c3418;
         }
         .status.is-checking { color: var(--fg-soft); background: #f1f5f6; }
+        .status.is-error {
+            background: #fde3dd;
+            color: #8c3418;
+            border-left: 4px solid var(--ucg-red-orange);
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -282,7 +288,7 @@
     </div>
 
     <script type="module">
-        import { QRCodeStyling, browserUtils, Mode, ErrorCorrectionLevel } from 'https://unpkg.com/@liquid-js/qr-code-styling/lib/qr-code-styling.js';
+        import { QRCodeStyling, Mode, ErrorCorrectionLevel } from 'https://unpkg.com/@liquid-js/qr-code-styling/lib/qr-code-styling.js';
 
         /* ------------------------------------------------------------------
            UCG brand constants — everything colour/type related lives here so a
@@ -366,30 +372,53 @@
             URL.revokeObjectURL(url);
         };
 
+        // If the PNG can't be produced, say so and hand over nothing. The old
+        // fallback quietly rendered the library's bare QR instead -- no border,
+        // no labels -- so a failed export looked like a successful one and the
+        // wrong artwork went out. Better to send the user to the SVG, which is
+        // an independent path that never touches the rasteriser.
+        const exportFailed = (reason, err) => {
+            console.error('UCG QR: PNG export failed —', reason, err || '');
+            setStatus(
+                'PNG export failed in this browser, so nothing was downloaded. '
+                + 'Use Download SVG instead — it produces the same artwork and '
+                + 'opens in Illustrator, Canva, and Word.',
+                'error'
+            );
+        };
+
         const downloadSvgAsPng = (svgText, fileName, width, height) => {
             const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgText)}`;
             const img = new Image();
             img.onload = () => {
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                // No paper fill: the artwork carries its own white inside the
-                // rounded border, so the four corners outside it stay
-                // transparent and the badge drops onto any background.
-                ctx.drawImage(img, 0, 0, width, height);
+                let pngUrl;
+                try {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    // No paper fill: the artwork carries its own white inside
+                    // the rounded border, so the four corners outside it stay
+                    // transparent and the badge drops onto any background.
+                    ctx.drawImage(img, 0, 0, width, height);
+                    // Throws if the canvas is tainted, or on an OOM at size.
+                    pngUrl = canvas.toDataURL('image/png');
+                } catch (err) {
+                    exportFailed('canvas could not be encoded', err);
+                    return;
+                }
+                if (!pngUrl || pngUrl === 'data:,') {
+                    exportFailed('canvas produced an empty image');
+                    return;
+                }
                 const a = document.createElement('a');
-                a.href = canvas.toDataURL('image/png');
+                a.href = pngUrl;
                 a.download = `${fileName}.png`;
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
             };
-            img.onerror = () => {
-                if (qrCode) {
-                    browserUtils.download(qrCode, { name: fileName, extension: 'png' }, { width, height });
-                }
-            };
+            img.onerror = (err) => exportFailed('the artwork SVG could not be rasterised', err);
             img.src = svgUrl;
         };
 
@@ -673,6 +702,7 @@
             get size() { return lastSize; },
             buildQrOptions,
             regenerate: generateQrCode,
+            downloadSvgAsPng,   // so the failure path can be exercised in tests
             constants: { UCG, GRADIENT_MID, GRADIENT_MID_OFFSET, QR_SIZE, BAND, qrCornerRadius, frameInnerRadius, framePathRadius }
         };
 

@@ -35,6 +35,12 @@ Dropbox and writes `nssharpe.github.io/ucg-qr/index.html`.
 
 ## Notes
 
+- **PNG export fails loudly.** If the artwork can't be rasterised or the canvas
+  can't be encoded, the page shows an error and downloads nothing, pointing the
+  user at the SVG instead — an independent path that never touches the
+  rasteriser. It used to fall back to `browserUtils.download`, which silently
+  rendered the library's *bare* QR: no border, no labels. A failed export looked
+  like a successful one and the wrong artwork went out.
 - **Transparent corners.** With the border on, the badge's white stops at the
   rounded border — the four corners outside it are transparent in both the PNG
   and the SVG, so it drops onto any background. That comes from the border rect
