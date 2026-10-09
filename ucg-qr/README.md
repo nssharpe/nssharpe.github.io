@@ -21,9 +21,9 @@ preview and then silently falls back in the download.
 Source and build script live alongside the NAIGC generator:
 
 ```
-Misc/Coding/ucg-qr-generator.src.html   <- edit this
-Misc/Coding/build_ucg_qr.py             <- then run this
-Misc/Coding/build_ucg_favicon.py        <- favicon artwork
+Gymnastics/UCG/Tools/QR Generator/ucg-qr-generator.src.html   <- edit this
+Gymnastics/UCG/Tools/QR Generator/build_ucg_qr.py             <- then run this
+Gymnastics/UCG/Tools/QR Generator/build_ucg_favicon.py        <- favicon artwork
 ```
 
 ```bash
